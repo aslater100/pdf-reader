@@ -3,41 +3,324 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PDF Reader: Embedded Audio – Support</title>
+<title>Audio in your PDF won't play? PDF Reader: Embedded Audio</title>
+<meta name="description" content="Course packets and language lessons often have recordings built into the PDF that Preview and Acrobat no longer play. PDF Reader: Embedded Audio finds them and puts a play button on the page. Free for Mac.">
+<link rel="canonical" href="https://aslater100.github.io/pdf-reader/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Audio in your PDF won't play?">
+<meta property="og:description" content="PDF Reader: Embedded Audio plays the recordings built into your PDFs, including ones made for the old Flash player. Free for Mac.">
+<meta property="og:url" content="https://aslater100.github.io/pdf-reader/">
+<meta property="og:image" content="https://aslater100.github.io/pdf-reader/assets/mac-window.jpg">
+<meta name="apple-itunes-app" content="app-id=6829089387">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PDF Reader: Embedded Audio",
+  "operatingSystem": "macOS",
+  "applicationCategory": "ProductivityApplication",
+  "description": "Opens PDFs and plays the audio embedded in them, including recordings made for Acrobat's Flash-based player. Highlight text and save it into the file.",
+  "url": "https://aslater100.github.io/pdf-reader/",
+  "downloadUrl": "https://apps.apple.com/app/id6829089387",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
 <style>
-  :root { color-scheme: light dark; --text:#1d1d1f; --muted:#6e6e73; --bg:#fff; --accent:#c62828; }
-  @media (prefers-color-scheme: dark) { :root { --text:#f2f2f7; --muted:#a1a1a6; --bg:#111; --accent:#ff6b5e; } }
-  body { margin:0; background:var(--bg); color:var(--text); font:17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-  main { max-width: 680px; margin: 0 auto; padding: 48px 16px 64px; }
-  h1 { font-size: 32px; margin: 0 0 4px; } h2 { font-size: 20px; margin-top: 36px; }
-  .sub { color: var(--muted); margin: 0 0 28px; }
-  a { color: var(--accent); }
-  dt { font-weight: 600; margin-top: 16px; } dd { margin: 4px 0 0; }
-  footer { color: var(--muted); font-size: 14px; margin-top: 48px; }
+  :root {
+    color-scheme: light dark;
+    --ground: #f4efe9;
+    --ground-deep: #ebe4dc;
+    --ink: #1c1c1e;
+    --muted: #5d5a57;
+    --rule: #ddd5cc;
+    --paper: #fff;
+    --paper-ink: #1c1c1e;
+    --paper-muted: #6b6b70;
+    --paper-rule: #e2e2e2;
+    --teal: #0f7a75;
+    --teal-tint: #e4f3f1;
+    --teal-edge: #a6d6d0;
+    --link: #0b625e;
+    --empty: #eeeeef;
+    --shadow: 0 1px 2px rgb(60 40 20 / .08), 0 18px 48px -12px rgb(60 40 20 / .22);
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --serif: ui-serif, "New York", "Iowan Old Style", Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #1b1a19;
+      --ground-deep: #232120;
+      --ink: #f2efeb;
+      --muted: #b2ada7;
+      --rule: #3a3633;
+      --link: #6fd4c9;
+      --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 18px 48px -12px rgb(0 0 0 / .7);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font: 18px/1.55 var(--sans); }
+  ::selection { background: #f7e27a; color: #1c1c1e; }
+  a { color: var(--link); text-underline-offset: .18em; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: 4px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* First viewport: the question on the left, the page that answers it on the right. */
+  .hero { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); gap: 56px; align-items: center; padding-block: 72px 88px; }
+  .app-name { font-size: 15px; font-weight: 600; color: var(--muted); margin: 0 0 20px; }
+  h1 { font-size: clamp(40px, 5.4vw, 64px); line-height: 1.04; letter-spacing: -.03em; margin: 0 0 24px; text-wrap: balance; }
+  .lede { font-size: 20px; color: var(--muted); margin: 0 0 32px; max-width: 34em; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .get { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+  .get img { display: block; height: 52px; width: auto; }
+  .get p { margin: 0; font-size: 15px; color: var(--muted); }
+
+  .demo { margin: 0; }
+  .page { background: var(--paper); color: var(--paper-ink); border-radius: 6px; box-shadow: var(--shadow); padding: 36px 40px 0; overflow: hidden; position: relative; }
+  .page::after { content: ""; position: absolute; inset: auto 0 0; height: 72px; background: linear-gradient(to bottom, transparent, var(--paper)); pointer-events: none; }
+  .fable-head { display: flex; flex-wrap: nowrap; align-items: center; gap: 12px 18px; padding-bottom: 12px; position: relative; }
+  .fable-head h2 { font-size: 21px; letter-spacing: -.01em; margin: 0; white-space: nowrap; }
+  .fable-head::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: linear-gradient(to right, var(--teal) var(--progress, 0%), var(--paper-rule) var(--progress, 0%)); }
+  .slot { position: relative; flex: 0 1 230px; min-width: 190px; height: 42px; }
+  .empty, .play { position: absolute; inset: 0; border-radius: 6px; transition: opacity .28s cubic-bezier(.2,.8,.2,1), transform .28s cubic-bezier(.2,.8,.2,1); }
+  .empty { background: var(--empty); border: 1px solid #dcdcdf; }
+  .play { display: flex; align-items: center; justify-content: center; gap: 10px; font: 600 15px var(--sans); color: var(--teal); white-space: nowrap; background: var(--teal-tint); border: 1px solid var(--teal-edge); cursor: pointer; }
+  .play:hover { border-color: var(--teal); }
+  .play svg { width: 12px; height: 12px; fill: currentColor; flex: none; }
+  .play .i-pause { display: none; }
+  .play.playing { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .play.playing .i-play { display: none; }
+  .play.playing .i-pause { display: block; }
+  .page[data-view="reader"] .empty { opacity: 0; transform: scale(.97); }
+  .page[data-view="other"] .play { opacity: 0; transform: scale(.97); pointer-events: none; visibility: hidden; transition-property: opacity, transform, visibility; }
+  .page[data-view="other"] .fable-head::after { background: var(--paper-rule); }
+  .page[data-view="other"] .time { visibility: hidden; }
+  .page p { font: 18px/1.6 var(--serif); margin: 28px 0 0; padding-bottom: 28px; }
+  .time { position: absolute; right: 0; top: calc(100% + 6px); font: 500 13px var(--sans); font-variant-numeric: tabular-nums; color: var(--paper-muted); }
+
+  .views { display: inline-flex; padding: 3px; margin: 0 0 16px; border-radius: 9px; background: var(--ground-deep); border: 0; }
+  .views legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .views input { position: absolute; opacity: 0; }
+  .views label { font-size: 14px; font-weight: 600; padding: 6px 14px; border-radius: 7px; color: var(--muted); cursor: pointer; }
+  .views input:checked + label { background: var(--paper); color: var(--paper-ink); box-shadow: 0 1px 2px rgb(0 0 0 / .12); }
+  .views input:focus-visible + label { outline: 3px solid var(--teal); outline-offset: 1px; }
+  .demo figcaption { font-size: 15px; color: var(--muted); margin-top: 16px; min-height: 3.1em; }
+
+  /* The rest reads top to bottom in one column, with the screenshot breaking out wider. */
+  section { padding: 72px 0; border-top: 1px solid var(--rule); }
+  section h2 { font-size: 32px; line-height: 1.15; letter-spacing: -.02em; margin: 0 0 20px; text-wrap: balance; }
+  .prose { max-width: 40em; }
+  .prose p { margin: 0 0 16px; }
+  .shot { margin: 40px 0 0; }
+  .shot img { display: block; width: 100%; height: auto; border-radius: 12px; box-shadow: var(--shadow); }
+  .shot figcaption { font-size: 15px; color: var(--muted); margin-top: 14px; }
+  .features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin: 40px 0 0; }
+  .features h3 { font-size: 17px; margin: 0 0 10px; }
+  .features ul { margin: 0; padding: 0; list-style: none; color: var(--muted); font-size: 16px; }
+  .features li { padding: 7px 0; border-top: 1px solid var(--rule); }
+  .formats { color: var(--muted); font-size: 16px; margin: 32px 0 0; max-width: 40em; }
+  dl { max-width: 40em; margin: 0; }
+  dt { font-weight: 600; margin-top: 24px; }
+  dt:first-child { margin-top: 0; }
+  dd { margin: 6px 0 0; color: var(--muted); }
+  footer { border-top: 1px solid var(--rule); padding: 32px 0 48px; font-size: 14px; color: var(--muted); }
+  footer p { margin: 0 0 6px; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 48px; padding-block: 40px 64px; }
+    .features { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 520px) {
+    body { font-size: 17px; }
+    .wrap { padding: 0 16px; }
+    .lede { font-size: 18px; }
+    .page { padding: 24px 20px 0; }
+    .fable-head { flex-wrap: wrap; }
+    .fable-head h2 { white-space: normal; }
+    .slot { flex-basis: 100%; }
+    section { padding: 56px 0; }
+    section h2 { font-size: 27px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .empty, .play { transition: none; }
+  }
 </style>
 </head>
 <body>
 <main>
-  <h1>PDF Reader: Embedded Audio</h1>
-  <p class="sub">A Mac app that opens PDFs, plays the audio inside them, and saves your highlights back into the file.</p>
+  <div class="wrap hero">
+    <div>
+      <p class="app-name">PDF Reader: Embedded Audio</p>
+      <h1>Audio in your PDF won't play?</h1>
+      <p class="lede">Course packets and language lessons often have their recordings built into the PDF. Many were made for Adobe's Flash player, which no longer works, so Preview and Acrobat show an empty box where the player was. <strong>PDF Reader finds those recordings and puts a play button in that spot.</strong></p>
+      <div class="get">
+        <a href="https://apps.apple.com/app/id6829089387">
+          <picture>
+            <source srcset="assets/mac-app-store-white.svg" media="(prefers-color-scheme: dark)">
+            <img src="assets/mac-app-store-black.svg" alt="Download on the Mac App Store" width="203" height="52">
+          </picture>
+        </a>
+        <p>Free. iPhone and iPad version coming soon.</p>
+      </div>
+    </div>
 
-  <h2>Contact</h2>
-  <p>Questions, bug reports and feature requests: <a href="mailto:kitaabi.ios@gmail.com">kitaabi.ios@gmail.com</a>. Please include your macOS version and, if you can, the PDF that shows the problem.</p>
+    <figure class="demo">
+      <fieldset class="views">
+        <legend>Show the page as it opens in</legend>
+        <input type="radio" name="view" id="view-other" value="other">
+        <label for="view-other">Preview or Acrobat</label>
+        <input type="radio" name="view" id="view-reader" value="reader" checked>
+        <label for="view-reader">PDF Reader</label>
+      </fieldset>
+      <div class="page" data-view="reader">
+        <div class="fable-head">
+          <h2>The Fox and the Grapes</h2>
+          <div class="slot">
+            <div class="empty" aria-hidden="true"></div>
+            <button class="play" type="button" aria-label="Play The Fox and the Grapes">
+              <svg class="i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg>
+              <svg class="i-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.5h2.4v9H2.5zM7.1 1.5h2.4v9H7.1z"/></svg>
+              The Fox and the Grapes
+            </button>
+          </div>
+          <span class="time" aria-hidden="true">0:46</span>
+        </div>
+        <p>A hungry Fox saw some fine bunches of Grapes hanging from a vine that was trained along a high trellis, and did his best to reach them by jumping as high as he could into the air. But it was all in vain, for they were just out of reach.</p>
+      </div>
+      <figcaption aria-live="polite">The sample lesson that comes with the app, with its real recording. Press play to hear it.</figcaption>
+      <audio src="assets/fox-and-grapes.mp3" preload="none"></audio>
+    </figure>
+  </div>
 
-  <h2>Common questions</h2>
-  <dl>
-    <dt>My PDF has audio but no play button appears.</dt>
-    <dd>Check the Audio list in the sidebar. Some recordings are attached to the whole document rather than a page, so they appear only there. If the list is empty, the recording may use a format the app doesn't read yet; please email us the file.</dd>
-    <dt>How do I highlight text?</dt>
-    <dd>Click Highlight in the toolbar, pick a color, then select text. You can also select text first and click the Highlight button that appears. Click a highlight to change its color or remove it.</dd>
-    <dt>Will saving damage my PDF?</dt>
-    <dd>No. Saving adds your highlights to the end of the file and leaves the rest, including the audio, as it was.</dd>
-    <dt>Can I keep a recording as a separate file?</dt>
-    <dd>Yes. While it plays, click the download button in the player bar.</dd>
-  </dl>
+  <section>
+    <div class="wrap">
+      <div class="prose">
+        <h2>Every recording, on the page and in a list</h2>
+        <p>Each recording gets a play button where it sits on the page, and the sidebar lists every recording in the document. Skip back to hear a line again, slow it down, or repeat a clip until you have it.</p>
+      </div>
+      <figure class="shot">
+        <img src="assets/mac-window.jpg" width="1600" height="977" loading="lazy" alt="PDF Reader on a Mac playing The Fox and the Grapes. The sidebar lists two recordings, the page shows a play button beside each fable title, and the player bar at the bottom shows 0:07 of 0:46.">
+        <figcaption>The Mac app with the sample lesson open.</figcaption>
+      </figure>
+    </div>
+  </section>
 
-  <p><a href="privacy.html">Privacy policy</a></p>
-  <footer>© 2026 Alexander Slater</footer>
+  <section>
+    <div class="wrap"><div class="prose">
+      <h2>Why the audio stopped working</h2>
+      <p>For years, the usual way to put a recording in a PDF was Acrobat's rich media player, which ran on Adobe Flash. Adobe ended Flash at the end of 2020, and the PDF apps people use today don't play that kind of media. The recording is still inside the file, but nothing opens it.</p>
+      <p>PDF Reader reads the audio straight out of the file and plays it directly, so it doesn't need Flash. Nothing is converted or uploaded, and your PDF isn't changed unless you save highlights into it.</p>
+    </div></div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>What it does</h2>
+      <div class="features">
+        <div>
+          <h3>Play</h3>
+          <ul>
+            <li>A play button on the page for every recording</li>
+            <li>A sidebar listing every recording</li>
+            <li>Skip back or forward 5 seconds</li>
+            <li>Speed from 0.5× to 1.5×, and repeat</li>
+            <li>Save any recording as an audio file</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Highlight and save</h3>
+          <ul>
+            <li>Highlight text in five colors</li>
+            <li>Click a highlight to recolor or remove it</li>
+            <li>Highlights save into the PDF, so other apps show them</li>
+            <li>The rest of the file, audio included, stays as it was</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Read</h3>
+          <ul>
+            <li>Search the whole document</li>
+            <li>Many languages, including right-to-left scripts</li>
+            <li>Light and dark mode</li>
+            <li>Works offline and collects no data</li>
+          </ul>
+        </div>
+      </div>
+      <p class="formats">Plays audio from Acrobat rich media (Flash) players, screen and sound annotations, and attached audio files in MP3, M4A, WAV and other common formats.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Common questions</h2>
+      <dl>
+        <dt>My PDF has audio but no play button appears.</dt>
+        <dd>Check the Audio list in the sidebar. Some recordings are attached to the whole document rather than a page, so they appear only there. If the list is empty, the recording may use a format the app doesn't read yet; please email us the file.</dd>
+        <dt>How do I highlight text?</dt>
+        <dd>Click Highlight in the toolbar, pick a color, then select text. You can also select text first and click the Highlight button that appears. Click a highlight to change its color or remove it.</dd>
+        <dt>Will saving damage my PDF?</dt>
+        <dd>No. Saving adds your highlights to the end of the file and leaves the rest, including the audio, as it was.</dd>
+        <dt>Can I keep a recording as a separate file?</dt>
+        <dd>Yes. While it plays, click the download button in the player bar.</dd>
+        <dt>Can it open password-protected PDFs?</dt>
+        <dd>Not yet. Open the file in an app that knows the password, save an unprotected copy, and open that.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap"><div class="prose">
+      <h2>Contact</h2>
+      <p>Questions, bug reports and feature requests: <a href="mailto:kitaabi.ios@gmail.com">kitaabi.ios@gmail.com</a>. Please include your macOS version and, if you can, the PDF that shows the problem.</p>
+    </div></div>
+  </section>
 </main>
+<footer>
+  <div class="wrap">
+    <p><a href="privacy.html">Privacy policy</a></p>
+    <p>The sample fable is from Aesop's Fables, translated by V. S. Vernon Jones, with a LibriVox recording. Both are in the public domain.</p>
+    <p>© 2026 Alexander Slater. Mac App Store is a service mark of Apple Inc.</p>
+  </div>
+</footer>
+<script>
+  const page = document.querySelector(".page");
+  const play = page.querySelector(".play");
+  const time = page.querySelector(".time");
+  const head = page.querySelector(".fable-head");
+  const audio = document.querySelector(".demo audio");
+  const caption = document.querySelector(".demo figcaption");
+  const captions = {
+    reader: "The sample lesson that comes with the app, with its real recording. Press play to hear it.",
+    other: "The same page in Preview or Acrobat: the recording is in the file, but all you see is an empty box.",
+  };
+  const clock = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+  play.addEventListener("click", () => (audio.paused ? audio.play() : audio.pause()));
+  audio.addEventListener("play", () => {
+    play.classList.add("playing");
+    play.setAttribute("aria-label", "Pause The Fox and the Grapes");
+  });
+  audio.addEventListener("pause", () => {
+    play.classList.remove("playing");
+    play.setAttribute("aria-label", "Play The Fox and the Grapes");
+  });
+  audio.addEventListener("timeupdate", () => {
+    if (!audio.duration) return;
+    head.style.setProperty("--progress", `${(audio.currentTime / audio.duration) * 100}%`);
+    time.textContent = `${clock(audio.currentTime)} / ${clock(audio.duration)}`;
+  });
+  audio.addEventListener("ended", () => {
+    audio.currentTime = 0;
+    head.style.setProperty("--progress", "0%");
+  });
+  document.querySelectorAll(".views input").forEach((input) =>
+    input.addEventListener("change", () => {
+      page.dataset.view = input.value;
+      caption.textContent = captions[input.value];
+      if (input.value === "other") audio.pause();
+    })
+  );
+</script>
 </body>
 </html>
